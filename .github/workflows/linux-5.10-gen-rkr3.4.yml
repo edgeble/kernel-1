@@ -46,10 +46,10 @@ jobs:
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: "v2024.05-6TOPS"
+          tag_name: "v2024.06-6TOPS"
           body: |
             ## Linux Kernel 6TOPS
-            - Fix USB3.0
+            - Add dp0-dp1-hdmi1-dsi0-cam01
           files: |
            linux.tar.xz
            modules.tar.xz
