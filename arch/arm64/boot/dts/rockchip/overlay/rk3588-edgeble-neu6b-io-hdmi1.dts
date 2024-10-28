@@ -1,0 +1,189 @@
+/dts-v1/;
+/plugin/;
+
+#include <dt-bindings/gpio/gpio.h>
+#include <dt-bindings/pinctrl/rockchip.h>
+#include <dt-bindings/display/rockchip_vop.h>
+
+/ {
+	fragment@0 {
+		target-path = "/";
+
+		__overlay__ {
+			hdmi1-sound {
+				status = "okay";
+				compatible = "rockchip,hdmi";
+				rockchip,mclk-fs = <128>;
+				rockchip,card-name = "rockchip-hdmi1";
+				rockchip,cpu = <&i2s6_8ch>;
+				rockchip,codec = <&hdmi1>;
+				rockchip,jack-det;
+			};
+
+			vcc3v3_sys: vcc3v3-sys {
+				compatible = "regulator-fixed";
+				regulator-name = "vcc3v3_sys";
+				regulator-always-on;
+				regulator-boot-on;
+				regulator-min-microvolt = <3300000>;
+				regulator-max-microvolt = <3300000>;
+				vin-supply = <&vcc5v0_sys>;
+			};
+
+			vdd_3v3_hdmitx: vdd-3v3-hdmitx-regulator {
+				compatible = "regulator-fixed";
+				regulator-name = "vdd_3v3_hdmitx";
+				regulator-boot-on;
+				regulator-always-on;
+				enable-active-high;
+				gpio = <&gpio4 RK_PB1 GPIO_ACTIVE_HIGH>;
+				pinctrl-names = "default";
+				pinctrl-0 = <&hdmi_tx_3v3_en>;
+				vin-supply = <&vcc3v3_sys>;
+			};
+		};
+	};
+
+	fragment@1 {
+		target = <&pinctrl>;
+
+		__overlay__ {
+			hdmi1 {
+				hdmi_tx_3v3_en: hdmi-tx-3v3-en {
+					rockchip,pins = <4 RK_PB1 RK_FUNC_GPIO &pcfg_pull_up>;
+				};
+        		};
+		};
+	};
+
+	fragment@2 {
+		target = <&hdmi1>;
+
+		__overlay__ {
+			status = "okay";
+			cec-enable = "true";
+		};
+	};
+
+	fragment@3 {
+		target = <&hdptxphy_hdmi1>;
+
+		__overlay__ {
+			status = "okay";
+		};
+	};
+	
+	fragment@4 {
+		target = <&hdptxphy_hdmi_clk1>;
+
+		__overlay__ {
+			status = "okay";
+		};
+	};
+	
+	fragment@5 {
+		target = <&i2s6_8ch>;
+
+		__overlay__ {
+			status = "okay";
+		};
+	};
+
+	fragment@6 {
+		target = <&display_subsystem>;
+
+		__overlay__ {
+			clocks = <&hdptxphy_hdmi_clk1>;
+			clock-names = "hdmi1_phy_pll";
+
+			route {
+				route_hdmi1: route-hdmi1 {
+					status = "okay";
+					connect = <&vp0_out_hdmi1>;
+				};
+
+				route_dsi0: route-dsi0 {
+					status = "okay";
+					connect = <&vp2_out_dsi0>;
+				};
+
+				route_dsi1: route-dsi1 {
+					status = "okay";
+					connect = <&vp3_out_dsi1>;
+				};
+			};
+		};
+	};
+
+	fragment@7 {
+		target = <&hdmi1_in_vp0>;
+
+		__overlay__ {
+			status = "okay";
+		};
+	};
+
+	fragment@8 {
+		target = <&hdmi1_in_vp1>;
+
+		__overlay__ {
+			status = "disabled";
+		};
+	};
+
+	fragment@9 {
+		target = <&hdmi1_in_vp2>;
+
+		__overlay__ {
+			status = "disabled";
+		};
+	};
+
+	fragment@10 {
+		target = <&vop>;
+
+		__overlay__ {
+			status = "okay";
+		};
+	};
+
+	fragment@11 {
+		target = <&vop_mmu>;
+
+		__overlay__ {
+			status = "okay";
+		};
+	};
+
+	fragment@12 {
+		target = <&vp0>;
+
+/* vp0 & vp1 splice for 8K output */
+		__overlay__ {
+			rockchip,plane-mask = <(1 << ROCKCHIP_VOP2_CLUSTER0 | 1 << ROCKCHIP_VOP2_ESMART0)>;
+			rockchip,primary-plane = <ROCKCHIP_VOP2_CLUSTER0>;
+			cursor-win-id = <ROCKCHIP_VOP2_ESMART0>;
+		};
+	};
+
+	fragment@13 {
+		target = <&vp1>;
+
+/* vp0 & vp1 splice for 8K output */
+		__overlay__ {
+			rockchip,plane-mask = <(1 << ROCKCHIP_VOP2_CLUSTER1 | 1 << ROCKCHIP_VOP2_ESMART1)>;
+			rockchip,primary-plane = <ROCKCHIP_VOP2_CLUSTER1>;
+			cursor-win-id = <ROCKCHIP_VOP2_ESMART1>;
+		};
+	};
+
+	fragment@14 {
+		target = <&vp3>;
+
+		__overlay__ {
+			rockchip,plane-mask = <(1 << ROCKCHIP_VOP2_CLUSTER3 | 1 << ROCKCHIP_VOP2_ESMART3)>;
+			rockchip,primary-plane = <ROCKCHIP_VOP2_CLUSTER3>;
+			cursor-win-id = <ROCKCHIP_VOP2_ESMART3>;
+		};
+	};
+};
