@@ -1,5 +1,9 @@
 # SPDX-License-Identifier: GPL-2.0
 dtbo-$(CONFIG_ARCH_ROCKCHIP) += \
+	rk3588-edgeble-neu6b-cam0.dtbo \
+	rk3588-edgeble-neu6b-cam01.dtbo \
+	rk3588-edgeble-neu6b-cam1.dtbo \
+	rk3588-edgeble-neu6b-io-hdmi1.dtbo \
 	rk3588-i2c0-m1.dtbo \
 	rk3588-i2c1-m0.dtbo \
 	rk3588-i2c2-m4.dtbo \
